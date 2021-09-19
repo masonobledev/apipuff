@@ -1,44 +1,33 @@
 let express = require('express')
+const { user } = require('pg/lib/defaults')
 let router = express.Router()
 const { Cigar, User } = require('../models')
 
-router.post("/create/", async(req, res) => {
-    let message;
+/**Create post */
+router.post("/posts", async(req, res) => {
+    const { userUuid, body } = req.body
 
     try{
-        let u = await User.findOne({ where: { id: req.body.id } })
-        if (u) {
-            let post = await Cigar.create({ content: req.body.content })
-            await u.addPost(post)
+        const user = await User.findOne({ where: { uuid: userUuid } })
+        const cigar = await Cigar.create({ body, userId: user.id })
 
-            let { id, content } = await Cigar.findOne({ where: { id: post.id } })
-            message = { message: "Post made!", data: { id, content }}    
-        }
-        else {
-            message = { message: "Can't make a post, user does not exist", data: null }
-        }
-
+        return res.json(cigar)
     } catch(err) {
-        message = { message: "Post Create Failed" }
+        console.log(err)
+        return res.status(500).json()
     }
-
-    res.json(message)
-
 })
 
-router.get("/all/:id", async(req, res) => {
-    let u = await User.findOne({ where: { id: req.params.id }})
-    let posts = u ? await u.getPosts() : null
-    if (posts){
-        let cleaned_posts = posts.map( p => {
-                    const { id, content } = p
-                    return { id, content }
-        })
-
-        res.send(cleaned_posts)
+/**Read all cigar posts */
+router.get("/posts", async(req, res) => {
+    const { userUuid, body} = req.body
+    try{
+        const posts = await Cigar.findAll({ include: 'user' })
+        return res.json(posts)
+    } catch(err) {
+        console.log(err)
+        return res.status(500).json()
     }
-    else
-        res.send(posts)
 })
 
 module.exports = router

@@ -8,7 +8,13 @@ router.post("/create/", async(req, res) => {
     try{
         let u = await User.findOne({ where: { id: req.body.id } })
         if (u) {
-            let post = await Bar.create({ content: req.body.content })
+            let post = await Bar.create({ 
+                name: req.body.bar.name,
+                address: req.body.bar.address,
+                URL: req.body.bar.url,
+                rating: req.body.bar.rating,
+                desc: req.body.bar.desc
+             })
             await u.addPost(post)
 
             let { id, content } = await Bar.findOne({ where: { id: post.id } })

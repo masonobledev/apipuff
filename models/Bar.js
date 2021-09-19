@@ -7,7 +7,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
         },
         url: {
-            type: DataTypes.STRING
+            type: DataTypes.STRING,
+            allowNull: true
         },
         rating: {
             type: DataTypes.INTEGER
