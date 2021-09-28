@@ -7,14 +7,14 @@ const port = 3000
 ;(async() => {
   app.use(express.json())
 
-  const auth = require('./controllers/Auth')
-  app.use('/user', auth)
+  const user = require('./controllers/User')
+  app.use('/user', user)
 
-  const post = require('./controllers/Cigar')
-  app.use('/cigar', post)
+  const cigar = require('./controllers/Cigar')
+  app.use('/cigar', cigar)
 
-  const spot = require('./controllers/Bar')
-  app.use('/bar', spot)
+  const bar = require('./controllers/Bar')
+  app.use('/bar', bar)
 
   // app.listen(port, () => {
   //   console.log(`Example app listening at http://localhost:${port}`)
@@ -25,4 +25,4 @@ const port = 3000
     await sequelize.authenticate()
     console.log('Database Connected!')
   })
-})()
+})();

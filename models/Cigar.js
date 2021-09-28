@@ -28,10 +28,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        userID: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        }
+        // userID: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false
+        // }
     });
     
     return Cigar

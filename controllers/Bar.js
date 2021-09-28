@@ -32,6 +32,7 @@ router.post("/create/", async(req, res) => {
 
 })
 
+
 router.get("/all/:id", async(req, res) => {
     let u = await User.findOne({ where: { id: req.params.id }})
     let posts = u ? await u.getPosts() : null

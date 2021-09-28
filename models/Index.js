@@ -12,15 +12,25 @@ const Bar = DefineBar(sequelize, DataTypes) //Defines the model
 // User.hasOne(Profile)
 // Profile.belongsTo(User)
 
-User.hasMany(Cigar, { foreignKey: 'userId', as: 'posts' })
-Cigar.belongsTo(User, { foreignKey: 'userId', as: 'user' })
+User.hasMany(Cigar)
+Cigar.belongsTo(User)
+
+// Cigar.hasMany(Ratings)
+// Ratings.belongsTo(Cigar)
 
 User.hasMany(Bar)
 Bar.belongsTo(User)
 
-// Cigar.belongsToMany(Bar)
-// Bar.belongsToMany(Cigar)
+// Bar.hasMany(Ratings)
+// Ratings.belongsTo(Bar)
 
-syncDb(sequelize, true)
+// User.hasMany(Cigar)
+// Cigar.belongsToMany(User , {through: Humidor})
+
+// User.hasMany(Bar)
+// Bar.belongsToMany(User , {through: TobaccoBar})
+
+
+syncDb(sequelize, { alter:true })
 
 module.exports = { User, Cigar, Bar }
