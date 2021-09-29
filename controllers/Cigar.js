@@ -1,10 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const validateSession = require('../middleware/validate-session');
 const { Cigar, User } = require('../models');
 
-/**Create post */
+/**Create post =============================================================================*/
 
-router.post('/create/', async(req, res) => {
+router.post("/create", /*validateSession,*/ async(req, res) => {
+    // const editCigar = {
+    //     brand: req.body.cigar.brand,
+    //     profile: req.body.cigar.profile,
+    //     shape: req.body.cigar.shape,
+    //     wrapper: req.body.cigar.wrapper,
+    //     origin: req.body.cigar.origin,
+    //     rating: req.body.cigar.rating
+    // };
+
     let message;
     console.log(Cigar)
     
@@ -28,38 +38,92 @@ router.post('/create/', async(req, res) => {
     res.json(message)
 });
 
+/**Get all entries ============================================================================================= */
 
-/**Get all by user id*/
+router.get("/", async(req, res) => {
 
-router.get("/all/:id", async(req, res) => {
-    let u = await User.findOne({ where: { id: req.params.id }})
-    
-    let sticks = u ? await u.getPosts() : null
-    if (sticks){
-        let all_sticks = sticks.map( s => {
-            const { id, content } = s
-            return { id, content }
-        })
+    let message;
+    console.log(Cigar)
+
+       try{
+            if (u){
+                const sticks = await Cigar.findAll({ include : User })
+                message = { msg: "Thanks!", data: { id: sticks.id} }
+
+            }
+            else {
+                message = { msg: "no reviews to be found", data: null }
+            }
         
-        res.send(all_sticks)
+        } catch(err) {
+                message = { msg: "review retrieval failed" }
+        }
+    
+        res.json(message)
+    });
+        
+
+        
+        
+            
+
+/**Get all by user id =================================================================*/
+
+router.get("/mine", async(req, res) => {
+
+    let message;
+    console.log(Cigar)
+    let userid = req.user.id;
+
+    try {
+        let u = await User.findOne({ where: { id: req.body.id } })
+        if (u) {    
+            let mySticks = await Cigar.findAll({ where : { owner: userid } })
+            await u.getPosts(mySticks)
+        
+            message = { msg: "Voila!"}, 
+            data
+        }
+
+        else {
+            message = { msg: "no reviews to be found", data: null }
+        }
+
+
+
+    } catch (err) {
+        message = { msg: "review retrieval failed" }
     }
-    else
-    res.send(sticks)
+	
 });
+    
+/**============================================================================================= */
+router.put("/edit:id", async(req, res) => {
+     const editCigar = {
+            brand: req.body.cigar.brand,
+            profile: req.body.cigar.profile,
+            shape: req.body.cigar.shape,
+            wrapper: req.body.cigar.wrapper,
+            origin: req.body.cigar.origin,
+            rating: req.body.cigar.rating
+        };
+
+    try{
+        let query = await User.findOne({ where: { id: req.body.id } });
+         if(query) {
+                let change = await Cigar.update({ query, editCigar })
+                message = { msg: "edits completed",}
+            }
+        else {
+            message = { msg: "no reviews to be found", data: null }
+        }
+
+        }  catch(err) {
+                message = { msg: "review retrieval failed" }
+        }
+    
+        res.json(message)
+     });
+ 
 
 module.exports = router
-
-/**============================================================================================= */
-// router.get("/posts", async(req, res) => {
-//     const { userUuid, body } = req.body
-
-//     try{
-//         const user = await User.findOne({ where: { uuid: userUuid } })
-//         const cigar = await Cigar.create({ body, userId: user.id })
-
-//         return res.json(cigar)
-//     } catch(err) {
-//         console.log(err)
-//         return res.status(500).json()
-//     }
-// })
