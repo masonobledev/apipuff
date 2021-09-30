@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models");
+const { User } = require("../models");
 
 const validateSession = (req, res, next) => {
-  const token = req.headers.authorization;
+  const authorizationValue = req.headers.authorization;
+  const token = authorizationValue.split(' ')[1];
   console.log("token -->", token);
   if (!token) {
     return res.status(403).send({ auth: false, message: "No token provided!" });
@@ -17,7 +18,7 @@ const validateSession = (req, res, next) => {
         })
           .then((user) => {
             if (!user) throw err;
-            req.user = user;
+            req.user = user.dataValues;
             return next();
           })
           .catch((err) => next(err));
