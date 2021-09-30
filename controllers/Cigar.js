@@ -10,12 +10,12 @@ router.post(
   validateSession, async (req, res) => {
 
     let message;
-    console.log ('------------------------>', req.user ?  req.user : 'Not here')
+    console.log ('------------------------>', { ...req.body, userID: 1 } )
 
     try {
     //   let u = await User.findOne({ where: { id: req.body.id } });
     //   if (u) {
-        let stick = await Cigar.create({ ...req.body, userID: req.user.id });
+        let stick = await Cigar.create({ ...req.body, userId: req.user.id });
         // await u.addPost(stick)
 
         let { id, content } = await Cigar.findOne({ where: { id: stick.id } });
@@ -38,7 +38,9 @@ router.get("/", async (req, res) => {
 
   try {
     // if (u){
-    const sticks = await Cigar.findAll();
+    const sticks = await Cigar.findAll({ where: {
+      userId: req.user.id
+    }});
     message = { msg: "Thanks!", data: sticks };
 
     // }
@@ -73,7 +75,8 @@ router.get("/:id", async (req, res) => {
     //     message = { msg: "no reviews to be found", data: null }
     // }
   } catch (err) {
-    message = { msg: "review retrieval failed", err };
+    message = { 
+      msg: "review retrieval failed", err };
   }
 
   res.json(message)

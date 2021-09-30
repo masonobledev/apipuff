@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const express = require('express');
 const router = express.Router();
 const { User } = require('../models');
-// const { user } = require('pg/lib/defaults');
 
 
 /*Register Route
@@ -12,14 +11,10 @@ const { User } = require('../models');
 router.post("/create", async (req, res) => {
     
     let message 
-    console.log(User)
+    // console.log(User)
     
     try {
         const user = await User.create({
-            // firstName: req.body.user.firstName,
-            // lastName: req.body.user.lastName,
-            // DOB: req.body.user.DOB,
-            // email: req.body.user.email,
             username: req.body.user.username,
             password: bcrypt.hashSync(req.body.user.password, 13),
             role: req.body.user.role,
@@ -50,7 +45,7 @@ router.post("/login", async (req, res) => {
     const { username, password } = req.body
 
     let message
-    console.log(req.body)
+    // console.log(req.body)
     
     try {
          const findUser = await User.findOne({ 
@@ -86,4 +81,35 @@ router.post("/login", async (req, res) => {
       res.json(message)
 });
 
-module.exports = router
+/* Logout Route
+============================================================================= */
+router.delete('/logout', async (req, res) => {
+  const { username } = req.body.username;
+
+  let message
+
+  try {
+      const byeUser = await User.findOne({ 
+        where: { username: username }
+      });
+
+      await byeUser.destroy()
+      
+            message = {
+              msg: 'Successfully logged out'
+            };
+          
+          } catch (err) {
+            console.log(err);
+        
+                message = {
+                  msg: 'Logout failed'
+                }
+          }
+        
+          res.json(message)
+      
+      });
+      
+      module.exports = router
+   
