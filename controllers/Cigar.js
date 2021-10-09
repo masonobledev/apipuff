@@ -80,30 +80,38 @@ router.get("/mine", async (req, res) => {
 
 });
 
-/**============================================================================================= */
-router.put("/edit:id", async (req, res) => {
-  const editCigar = {
-    brand: req.body.cigar.brand,
-    profile: req.body.cigar.profile,
-    shape: req.body.cigar.shape,
-    wrapper: req.body.cigar.wrapper,
-    origin: req.body.cigar.origin,
-    rating: req.body.cigar.rating,
-  };
+/**Update Post ========================================================================================= */
+
+router.put("/:uuid", async (req, res) => {
+
+  let message
+  const uuid = req.params.uuid
+  const { brand, profile, shape, wrapper, origin } = req.body
 
   try {
-    let query = await User.findOne({ where: { id: req.body.id } });
-    if (query) {
-      let change = await Cigar.update({ query, editCigar });
-      message = { msg: "edits completed" };
-    } else {
-      message = { msg: "no reviews to be found", data: null };
-    }
+ 
+    const sticks = await Cigar.findOne(
+      
+      { where: { uuid } }
+      
+      );
+
+      sticks.brand = brand
+      sticks.profile = profile
+      sticks.shape = shape
+      sticks.wrapper = wrapper
+      sticks.origin = origin
+
+      await sticks.save()
+
+    message = { msg: "Thanks!", data: sticks };
+
   } catch (err) {
     message = { msg: "review retrieval failed" };
   }
 
-  res.json(message);
+  res.json(message)
+
 });
 
 module.exports = router;
