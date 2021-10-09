@@ -5,31 +5,30 @@ const { Cigar, User } = require("../models");
 
 /**Create post =============================================================================*/
 
-router.post(
-  "/create",
-  validateSession, async (req, res) => {
+router.post("/create", /*validateSession,*/ async (req, res) => {
 
     let message;
-    console.log ('------------------------>', { ...req.body, userID: 1 } )
+
+    const { userUuid, body } = req.body
 
     try {
-    //   let u = await User.findOne({ where: { id: req.body.id } });
-    //   if (u) {
-        let stick = await Cigar.create({ ...req.body, userId: req.user.id });
-        // await u.addPost(stick)
+          const user = await User.findOne({ where: { uuid: userUuid } })
+
+          const stick = await Cigar.create({ ...req.body, userId: user.id });
 
         let { id, content } = await Cigar.findOne({ where: { id: stick.id } });
         message = { msg: "Thanks!", data: { id, content } };
-    //   } else {
-    //     message = { msg: "Can't make a post--no user to be found", data: null };
-    //   }
-    } catch (err) {
-      message = { msg: "review post failed", err };
-    }
 
+    } catch (err) {
+      console.log(err)
+        message = { 
+        msg: "review post failed", err 
+        };
+    }
     res.json(message);
   }
-);
+  );
+
 
 /**Get all entries ============================================================================================= */
 
@@ -37,16 +36,15 @@ router.get("/", async (req, res) => {
   let message;
 
   try {
-    // if (u){
-    const sticks = await Cigar.findAll({ where: {
-      userId: req.user.id
-    }});
+
+    const sticks = await Cigar.findAll(
+      
+      // { where: { userId: req.body.userId } } 
+      
+      );
+    
     message = { msg: "Thanks!", data: sticks };
 
-    // }
-    // else {
-    //     message = { msg: "no reviews to be found", data: null }
-    // }
   } catch (err) {
     message = { msg: "review retrieval failed" };
   }
@@ -56,27 +54,26 @@ router.get("/", async (req, res) => {
 
 /**Get all by user id =================================================================*/
 
-router.get("/:id", async (req, res) => {
+router.get("/mine", async (req, res) => {
   let message;
 
-  // let userid = req.user.id;
-
   try {
-    // let u = await User.findOne({ where: { id: req.body.id } })
-    // if (u) {
-    let mySticks = await Cigar.findAll({ where: { id: req.params.id } });
+ 
+    const sticks = await Cigar.findOne(
+      
+      { where: { userId: req.body.userId } }
+      
+      );
+
+    message = { msg: "Thanks!", data: sticks };
+    
+    // let mySticks = await Cigar.findAll({ where: { id: req.params.id } });
     // await u.getPosts(mySticks)
 
     message = { msg: "Voila!", data: mySticks };
 
-    // }
-
-    // else {
-    //     message = { msg: "no reviews to be found", data: null }
-    // }
   } catch (err) {
-    message = { 
-      msg: "review retrieval failed", err };
+    message = { msg: "review retrieval failed" };
   }
 
   res.json(message)

@@ -12,8 +12,8 @@ const Bar = DefineBar(sequelize, DataTypes) //Defines the model
 // User.hasOne(Profile)
 // Profile.belongsTo(User)
 
-User.hasMany(Cigar)
-Cigar.belongsTo(User)
+User.hasMany(Cigar, { foreignKey: 'userId' })
+Cigar.belongsTo(User, { foreignKey: 'userId' })
 
 // Cigar.hasMany(Ratings)
 // Ratings.belongsTo(Cigar)

@@ -37,6 +37,9 @@ router.post("/create", async (req, res) => {
     res.json(message)
 });
 
+/*Update User ===================================================================== */
+
+
 /* Login Route - "msg: "Login failed"
 =================================================================================== */
 
@@ -81,19 +84,90 @@ router.post("/login", async (req, res) => {
       res.json(message)
 });
 
+/* Get all users Route
+============================================================================= */
+router.get('/', async (req, res) => {
+  
+  let message 
+  
+  try{
+      const users = await User.findAll()
+
+      return res.json(users)
+
+  } catch (err){
+      console.log(err)
+      
+      message = {
+      msg:'Failed to Retrieve Users'
+      }
+  }
+});
+/**Find one user route
+ * ========================================================================== */
+ router.get('/:uuid', async (req, res) => {
+  
+  let message 
+  const uuid = req.params.uuid
+
+  try{
+      const user = await User.findOne(
+        
+        { where: { uuid } }
+        
+        );
+
+      return res.json(user)
+  } catch (err){
+      console.log(err)
+      message = {
+      msg:'Failed to Retrieve User'
+      }
+  }
+})
+
+/*Update User ===================================================================== */
+
+router.put('/:uuid', async (req, res) => {
+  
+  let message 
+  const uuid = req.params.uuid
+  const { username, role } = req.body
+
+  try{
+      const user = await User.findOne( { where: { uuid } } );
+
+        user.username = username
+        user.role = role
+
+        await user.save()
+
+      return res.json(user)
+  } catch (err){
+      console.log(err)
+      message = {
+      msg:'Failed to Retrieve User'
+      }
+  }
+})
+
+
 /* Logout Route
 ============================================================================= */
-router.delete('/logout', async (req, res) => {
-  const { username } = req.body.username;
+router.delete('/:uuid', async (req, res) => {
+  // const { username } = req.body.username;
+  const uuid = req.params.uuid
 
   let message
 
   try {
-      const byeUser = await User.findOne({ 
-        where: { username: username }
-      });
+      const user = await User.findOne(
+        
+        { where: { uuid } }
+        
+        );
 
-      await byeUser.destroy()
+      await user.destroy()
       
             message = {
               msg: 'Successfully logged out'

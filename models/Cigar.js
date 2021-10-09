@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.UUID,
             defaultValue: DataTypes.UUIDV4
         },
+        userId: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         brand: {
             type: DataTypes.STRING,
             allowNull: false
@@ -24,14 +28,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        rating: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        userId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        }
+        // rating: {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: false
+        // }
     });
     
     return Cigar
