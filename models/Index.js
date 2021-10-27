@@ -4,10 +4,12 @@ const { DataTypes } = require('sequelize')
 const DefineUser = require('./User')
 const DefineCigar = require('./Cigar')
 const DefineBar = require('./Bar')
+// const DefineRating = require('./Rating')
 
 const User = DefineUser(sequelize, DataTypes) //Defines the model
 const Cigar = DefineCigar(sequelize, DataTypes) //Defines the model
 const Bar = DefineBar(sequelize, DataTypes) //Defines the model
+// const Rating = DefineRating(sequelize, DataTypes) //Defines the model
 
 // User.hasOne(Profile)
 // Profile.belongsTo(User)
@@ -15,8 +17,8 @@ const Bar = DefineBar(sequelize, DataTypes) //Defines the model
 User.hasMany(Cigar, { foreignKey: 'userId' })
 Cigar.belongsTo(User, { foreignKey: 'userId' })
 
-// Cigar.hasMany(Rating)
-// Rating.belongsTo(Cigar)
+// Cigar.hasMany(Rating, { foreignKey: 'cigarId' })
+// Rating.belongsTo(Cigar, { foreignKey: 'cigarId' })
 
 // User.hasMany(Bar)
 // Bar.belongsTo(User)
@@ -31,6 +33,6 @@ Cigar.belongsTo(User, { foreignKey: 'userId' })
 // Bar.belongsToMany(User , {through: TobaccoBar})
 
 
-syncDb(sequelize, { alter:true })
+syncDb(sequelize, { alter: true })
 
 module.exports = { User, Cigar, Bar }

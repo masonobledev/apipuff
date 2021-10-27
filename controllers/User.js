@@ -54,10 +54,10 @@ router.post("/login", async (req, res) => {
          const findUser = await User.findOne({ 
            where :  { username: req.body.username }
         });
-        
+        console.log(findUser)
         if (findUser) {
-          const comparePassword = bcrypt.compare( User.password, findUser.password );
-    
+          const comparePassword = bcrypt.compare( req.body.password, findUser.password );
+          console.log(comparePassword)
           if (comparePassword) {
             const token = jwt.sign({ id: findUser.id }, process.env.JWT_SECRET, { expiresIn: 60 * 60 * 24 });
 
